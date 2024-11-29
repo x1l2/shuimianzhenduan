@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>该病的详细查询结果</title>
+    <style>
+        body {
+            background-image:url("https://tse1-mm.cn.bing.net/th/id/OIP-C.We5HewE2DSszYxn16f6-CQHaEK?w=321&h=180&c=7&r=0&o=5&pid=1.7");
+            background-size: cover;
+        }
+        /* 给h2添加一些类似导航栏的基本样式，比如背景色、文字居中等，可按需调整 */
+        h2 {
+            background-color: #ccc;
+            text-align: center;
+            padding: 10px;
+        }
+
+        button {
+            margin-bottom: 5px; /* 让每个按钮在垂直方向相隔5px */
+            margin-right: 5px; /* 可以适当增加按钮之间水平方向的间隔，可根据实际调整 */
+            background-color: #b7e0ca;
+            border: none;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>详细查询结果</h2>
+    {% for category, values in data2.items %}
+        <h3>{{ category }}：</h3>
+    <!-- 判断values是否为空列表，如果为空则显示相应提示信息，否则正常循环输出按钮 -->
+    {% if values %}
+        {% for value in values %}
+            <button type="button" data-disease-name="{{ value }}" onclick="showDetails(this)" bake-color="#f0f0f0">
+                {{ value }}
+            </button>
+        {% endfor %}
+    {% else %}
+        <p>没有查找到相应内容......</p>
+    {% endif %}
+    {% endfor %}
+    <civ><br></civ>
+    <button id="backButton" type="button" onclick="goBack()">返回</button>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+
+</html>

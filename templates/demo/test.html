@@ -1,0 +1,46 @@
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>智能诊断系统</title>#}
+{#</head>#}
+{##}
+{#<body>#}
+{#    <h1>欢迎使用智能诊断系统</h1>#}
+{#    <form method="post">#}
+{#        {% csrf_token %}#}
+{#        <label for="symptoms">请输入症状：</label><br>#}
+{#        <input type="text" id="symptoms" name="symptoms" placeholder="输入症状"><br>#}
+{#        <input type="submit" value="查询">#}
+{#    </form>#}
+{#    <h2>查询结果（点击按钮查看详情）：</h2>#}
+{#    {% for category, values in data1.items %}#}
+{#        <h3>{{ category }}</h3>#}
+{#        {% for value in values %}#}
+{#            <button type="button" data-disease-name="{{ value }}" onclick="showDetails(this)">#}
+{#                {{ value }}#}
+{#            </button>#}
+{#        {% endfor %}#}
+{#    {% endfor %}#}
+{#    <script>#}
+{#        function showDetails(button) {#}
+{#            const diseaseName = button.dataset.diseaseName;#}
+{#            // 发送POST请求到test1视图，传递病种名称参数#}
+{#            fetch('test1/', {#}
+{#                method: 'POST',#}
+{#                headers: {#}
+{#                    'Content-Type': 'application/x-www-form-urlencoded',#}
+{#                    'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value#}
+{#                },#}
+{#                body: `disease_name=${diseaseName}`#}
+{#            })#}
+{#           .then(response => response.text())#}
+{#           .then(() => {#}
+{#                // 这里可以添加逻辑，比如跳转到test1页面或者通过AJAX更新当前页面部分内容展示详细信息#}
+{#                window.location.href = 'test1/';#}
+{#            });#}
+{#        }#}
+{#    </script>#}
+{#</body>#}
+{##}
+{#</html>#}
