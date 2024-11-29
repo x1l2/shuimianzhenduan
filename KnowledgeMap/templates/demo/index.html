@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>睡眠相关界面</title>
+    <style>
+        /* 整体页面布局样式 */
+        body {
+            background-color: #16d2bd;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 导航栏样式 */
+        nav {
+            background-color: #8c11be;
+            color: #8d20b2;
+            padding: 10px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        nav ul button {
+            background-color: #96eeee;
+        }
+
+        nav ul #home-link {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+
+        nav ul {
+            width: calc(100% - 60px);
+        }
+
+        nav ul li {
+            cursor: pointer;
+        }
+
+        /* 首页按钮样式 */
+        #home-button {
+            position: absolute;
+            top: 5px; /* 与导航栏顶部对齐 */
+            left: 2px; /* 距离左边边框2px */
+            background-color: #96eeee;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        /* 首页按钮右侧的白线 */
+        #home-button::after {
+            content: "";
+            position: absolute;
+            top: 0; /* 从按钮顶部开始 */
+            left: 50px; /* 从按钮中心开始 */
+            width: 2px;
+            height: 100%; /* 从按钮顶部到底部 */
+            background-color: white;
+        }
+
+        /* 模块展示区域样式 */
+        .module-display {
+            padding: 20px;
+        }
+
+        /* 问答模块输入框和按钮样式 */
+        .question-answer-module input[type="text"],
+        .question-answer-module button {
+            margin: 5px;
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <ul>
+            <button id="question-answer-link">问答模块</button>
+            <button id="知识图谱展链接">知识图谱展示</button>
+        </ul>
+    </nav>
+    <!-- 首页按钮 -->
+    <button id="home-button">首页</button>
+    <!-- 模块展示区域 -->
+    <div class="module-display" id="home-display">
+        <h2>首页内容展示</h2>
+        <!-- 这里可以添加具体的首页展示内容 -->
+    </div>
+
+    <div class="module-display" id="question-answer-display" style="display: block;">
+        <h2>问答模块</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="symptoms">
+                <p>请输入您可能有的症状</p>
+            </label><br>
+            <input type="text" id="symptoms" name="symptoms" placeholder="输入症状"><br>
+            <input type="submit" value="查询">
+        </form>
+        <h5>查询结果（点击按钮查看详情）：</h5>
+        {% for category, values in data1.items %}
+            <h3>{{ category }}</h3>
+            {% for value in values %}
+                <button type="button" data-disease-name="{{ value }}" onclick="showDetails(this)">
+                    {{ value }}
+                </button>
+            {% endfor %}
+        {% endfor %}
+        <script>
+            function showDetails(button) {
+                const diseaseName = button.dataset.diseaseName;
+                // 发送POST请求到test1视图，传递病种名称参数
+                fetch('test1/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value
+                    },
+                    body: `disease_name=${diseaseName}`
+                })
+                   .then(response => response.text())
+                   .then(() => {
+                        // 这里可以添加逻辑，比如跳转到test1页面或者通过AJAX更新当前页面部分内容展示详细信息
+                        window.location.href = 'test1/';
+                    });
+            }
+        </script>
+    </div>
+
+    <div class="module-display" id="knowledge-graph-display" style="display: none;">
+        <h2>知识图谱展内容展示</h2>
+        <!-- 这里可以添加具体的知识图谱展展示内容 -->
+    </div>
+
+    <!-- 添加 CSRF 令牌 -->
+    {% csrf_token %}
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            // 初始时隐藏首页和知识图谱展示模块，显示问答模块
+            const homeDisplay = document.getElementById('home-display');
+            const questionAnswerDisplay = document.getElementById('question-answer-display');
+            const knowledgeGraphDisplay = document.getElementById('knowledge-graph-display');
+            homeDisplay.style.display = 'none';
+            questionAnswerDisplay.style.display = 'block';
+            knowledgeGraphDisplay.style.display = 'none';
+
+            // 获取导航栏链接和模块展示区域元素
+            const homeButton = document.getElementById('home-button');
+            const questionAnswerLink = document.getElementById('question-answer-link');
+            const knowledgeGraphLink = document.getElementById('知识图谱展链接');
+
+            questionAnswerLink.addEventListener('click', function () {
+                homeDisplay.style.display = 'none';
+                questionAnswerDisplay.style.display = 'block';
+                knowledgeGraphDisplay.style.display = 'none';
+            });
+
+            knowledgeGraphLink.addEventListener('click', function () {
+                homeDisplay.style.display = 'none';
+                questionAnswerDisplay.style.display = 'none';
+                knowledgeGraphDisplay.style.display = 'block';
+            });
+
+            homeButton.addEventListener('click', function () {
+                homeDisplay.style.display = 'block';
+                questionAnswerDisplay.style.display = 'none';
+                knowledgeGraphDisplay.style.display = 'none';
+            });
+
+            // 问答模块查询按钮点击事件处理函数
+            const queryButton = document.getElementById('query-button');
+            queryButton.addEventListener('click', function () {
+                const symptomInput = document.getElementById('symptom-input').value;
+
+                // 获取 CSRF 令牌
+                const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+                // 发送 POST 请求到后端的 /test 接口
+                fetch('/demo/index/test/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken  // 添加 CSRF 令牌
+                    },
+                    body: JSON.stringify({ symptoms: symptomInput })
+                })
+                   .then(response => response.json())
+                   .then(data => {
+                        // 在页面上展示 initial_data
+                        const initialDataDisplay = document.getElementById('data1');
+                        initialDataDisplay.innerHTML = '';
+                        for (const key in data.data1) {
+                            if (key === '睡眠障碍疾病病种') {
+                                const diseaseList = data.data1[key];
+                                for (const disease of diseaseList) {
+                                    const button = document.createElement('button');
+                                    button.textContent = disease;
+                                    button.addEventListener('click', function () {
+                                        // 将该病的名称发送到后端的 /test1 接口
+                                        fetch('/demo/index/test1/', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRFToken': csrfToken  // 添加 CSRF 令牌
+                                            },
+                                            body: JSON.stringify({ disease_name: disease })
+                                        })
+                                           .then(response => response.json())
+                                           .then(data => {
+                                                // 在 test1 界面展示 data 中的内容
+                                                const test1Display = document.getElementById('test1-display');
+                                                test1Display.innerHTML = '';
+                                                for (const key in data.data2) {
+                                                    const valueList = data.data2[key];
+                                                    const p = document.createElement('p');
+                                                    p.textContent = `${key}: ${valueList.join(', ')}`;
+                                                    test1Display.appendChild(p);
+                                                }
+                                                // 显示返回按钮
+                                                const backButton = document.createElement('button');
+                                                backButton.textContent = '返回';
+                                                backButton.addEventListener('click', function () {
+                                                    // 返回到 test 的数据展示界面
+                                                    homeDisplay.style.display = 'none';
+                                                    questionAnswerDisplay.style.display = 'block';
+                                                    knowledgeGraphDisplay.style.display = 'none';
+                                                });
+                                                test1Display.appendChild(backButton);
+                                            });
+                                    });
+                                    initialDataDisplay.appendChild(button);
+                                }
+                            } else {
+                                const p = document.createElement('p');
+                                p.textContent = `${key}: ${data.data1[key].join(', ')}`;
+                                initialDataDisplay.appendChild(p);
+                            }
+                        }
+                    });
+            });
+        });
+    </script>
+</body>
+
+</html>
